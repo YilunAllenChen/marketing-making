@@ -1,4 +1,33 @@
 {
-  "bid_gap": 10,
-  "ask_gap": 10
+  "strategy1": {
+    "name": "autoquoter",
+    "config": {
+      "quotes": {
+        "asks": [
+          {
+            "offset": 0,
+            "size": 0.3
+          },
+          {
+            "offset": 10,
+            "size": 0.3
+          }
+        ],
+        "bids": [
+          {
+            "offset": 0,
+            "size": 0.3
+          },
+          {
+            "offset": -10,
+            "size": 0.3
+          }
+        ]
+      },
+      "inventory": {
+        "long_limit": 1.0,
+        "short_limit": -1.0
+      }
+    }
+  }
 }
