@@ -10,36 +10,39 @@ from portfolio import Portfolio
 from apis import ws_client, client, SYMBOL
 
 dir_path = os.path.dirname(os.path.realpath(__file__)) + "/config.json"
-with open(dir_path, 'r') as f:
+with open(dir_path, "r") as f:
     config = json.loads(f.read())
-    strat_1 = config['strategy1']
+    strat_1 = config["strategy1"]
 p = Portfolio(config=strat_1)
 
 
 def book_update_handler(message):
     try:
         new_quotes = {}
-        new_quotes['ask_px'] = float(message['a'][0][0])
-        new_quotes['ask_qty'] = float(message['a'][0][1])
-        new_quotes['bid_px'] = float(message['b'][0][0])
-        new_quotes['bid_qty'] = float(message['b'][0][1])
+        new_quotes["ask_px"] = float(message["a"][0][0])
+        new_quotes["ask_qty"] = float(message["a"][0][1])
+        new_quotes["bid_px"] = float(message["b"][0][0])
+        new_quotes["bid_qty"] = float(message["b"][0][1])
         # used for retreaing to next level
+        new_quotes["secondary_ask_px"] = float(message["a"][1][0])
+        new_quotes["secondary_bid_px"] = float(message["b"][1][0])
 
         p.update_quotes(new_quotes=new_quotes)
     except Exception as e:
         logging.error(f"Error parsing book update : {str(e)}", exc_info=True)
-    
+
+
 def account_update_handler(message):
     if message.get("e") == "ORDER_TRADE_UPDATE":
-        oid = message['o']['i']
-        new_status = message['o']['X']
+        oid = message["o"]["i"]
+        new_status = message["o"]["X"]
         if "FILL" in new_status:
             logging.info(f"order {oid} is now {new_status}")
     elif message.get("e") == "ACCOUNT_UPDATE":
-        positions = message['a']['P']
+        positions = message["a"]["P"]
         for position in positions:
-            if position['s'] == "BTCUSDT":
-                position_size = float(position['pa'])
+            if position["s"] == "BTCUSDT":
+                position_size = float(position["pa"])
                 p.update_position_size(position_size=position_size)
 
 

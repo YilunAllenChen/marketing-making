@@ -10,10 +10,9 @@ BINANCE_BASE_URL = os.environ.get("BINANCE_BASE_URL")
 
 SYMBOL = "BTCUSDT"
 
+client = Client(
+    key=BINANCE_API_KEY, secret=BINANCE_API_SECRET, base_url=BINANCE_BASE_URL
+)
 
-client = Client(key=BINANCE_API_KEY, secret=BINANCE_API_SECRET, base_url=BINANCE_BASE_URL)
 ws_client = CMFuturesWebsocketClient(stream_url="wss://stream.binancefuture.com")
-
-
-
 ws_client.start()
