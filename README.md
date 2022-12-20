@@ -9,9 +9,9 @@ The implementation focuses on extendability and configurability.
 # Highlights
 
 ### Parameterized Strategy
-Strategy is parameterized in a config file, which can be easily altered by researchers / analysts without the need to reach into
-source code. Also makes the deployment cycle much tighter, as changing the config file doesn't require a rebuild on the whole
-system.
+Strategy is parameterized in a config file (in config.json), which can be easily altered by researchers / analysts without the need to reach into
+source code. Also makes the deployment cycle much tighter, as changing the config file doesn't require a rebuild on the whole system.
+One can even implement a periodic check in the strategy script on the content of the file to allow during-run-time adjustments.
 
 ### Extendable Architecture
 The execution engine is designed such that extending its functionalities is made easier.
@@ -21,8 +21,8 @@ in the future when we want to make the system distributed, or that we want to ha
 running together and we have need of a message queue, we can easily strip away the message handling and hook it up with a message
 queue, and create another app that runs the strategy and consumes from that message queue.
 
-### Local Copy + Eventual Consistency Hybrid Model
-For live position information, a hybrid model is utilized. We initialize our portfolio by querying the RESTful API's, and then
+### Local Copy + Eventual Consistency Model
+For live position information, we initialize our portfolio by querying the RESTful API's, and then
 start to listen to updates from websockets, updating local information as necessary. The information saved locally is designed to
 be minimal such that it's guaranteed to be correct. This saves bandwidth and allows the strategy to react to events fast. To mitigate
 the problem of inaccuracy, a periodic reset is also implemented such that in the unusual event that our updates are incorrect / stale,
@@ -34,6 +34,10 @@ up the reset cycle, but can't completely solve it. The ultimate way to solve it 
 but that will be way too slow. Given the nature of this strategy, which requires us to constantly react to top-of-book changes, and also
 given that our exposure to the market will be limited, I believe latency matters a lot more than accuracy. 
 
+### Bulk Orders
+All apis in this implementation are done in bulks, and only done if necessary. For example, if ask price changed, then all ask quotes, and
+only all ask quotes, will be cancelled and resubmitted in one bulk. This minimizes back-and-forth traffic and is faster than doing them
+one by one. One can further improve this by leveraging non-blocking calls (see potential improvements)
 
 # Potential Improvements
 ### Async Optimizations
