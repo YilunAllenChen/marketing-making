@@ -2,6 +2,9 @@
 
 This repo is dedicated to the binance testnet coding challenge assignment for the Monoceros technical interview.
 
+Example screenshot:
+<img width="1027" alt="image" src="https://user-images.githubusercontent.com/32376517/208554988-a749b758-35eb-47ce-9857-72c45c9b96f8.png">
+
 
 # High Level Design
 The implementation focuses on extendability and configurability.
