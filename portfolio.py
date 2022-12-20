@@ -65,13 +65,13 @@ class Portfolio():
             ask_px_changed = bid_px_changed = False
             if new_quotes['ask_px'] != self.quotes['ask_px']:
                 ask_px_changed = True
-                self._logger.info("Ask price changed: adjusting quotes")
+                self._logger.info(f"Ask price changed: {self.quotes['ask_px']} -> {new_quotes['ask_px']} adjusting quotes")
                 asks_to_cancel.extend([ask['orderId'] for ask in self.asks])
                 self.asks = []
                 asks_to_submit.extend(self._create_new_asks_params(new_quotes))
             if new_quotes['bid_px'] != self.quotes['bid_px']:
                 bid_px_changed = True
-                self._logger.info("Bid price changed: adjusting quotes")
+                self._logger.info(f"Bid price changed: {self.quotes['bid_px']} -> {new_quotes['bid_px']} adjusting quotes")
                 bids_to_cancel.extend([bid['orderId'] for bid in self.bids])
                 self.bids = []
                 bids_to_submit.extend(self._create_new_bids_params(new_quotes))
@@ -87,17 +87,6 @@ class Portfolio():
                             self.asks.remove(ask['orderId'])
                         except:
                             pass
-                        try:
-                            asks_to_submit.append({
-                                "symbol": SYMBOL.lower(),
-                                "side": "SELL",
-                                "type": "LIMIT",
-                                "quantity": str(ask['origQty']),
-                                "timeInForce": "GTC",
-                                "price": str(new_quotes['secondary_ask_px'])
-                            })
-                        except Exception as e:
-                            pass
 
             if not bid_px_changed:
                 for bid in self.bids:
@@ -107,17 +96,6 @@ class Portfolio():
                         try:
                             self.bids.remove(bid['orderId'])
                         except:
-                            pass
-                        try:
-                            bids_to_submit.append({
-                                "symbol": SYMBOL.lower(),
-                                "side": "BUY",
-                                "type": "LIMIT",
-                                "quantity": str(bid['origQty']),
-                                "timeInForce": "GTC",
-                                "price": str(new_quotes['secondary_bid_px'])
-                            })
-                        except Exception as e:
                             pass
 
             # cancel old orders and make new orders
@@ -136,7 +114,7 @@ class Portfolio():
 
     def update_position_size(self, position_size):
         self.position_size = position_size
-        self._logger.debug(f"Position size is now {self.position_size}")
+        self._logger.info(f"Position size is now {self.position_size}")
 
     def _create_new_asks_params(self, new_quotes):
         params = []

@@ -29,6 +29,9 @@ def book_update_handler(message):
 
         p.update_quotes(new_quotes=new_quotes)
     except Exception as e:
+        if "id" in message:
+            logging.info("Connection established")
+            return
         logging.error(f"Error parsing book update : {str(e)}", exc_info=True)
     
 def account_update_handler(message):
